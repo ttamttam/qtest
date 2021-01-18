@@ -1028,7 +1028,8 @@ For better control, a rule can be used (adapt to fit your needs):
   (targets run_qtest.ml)
   (deps (source_tree src))
   ; here is where you need to tell qtest what files to consider
-  (action (run qtest extract src/foo1.ml src/foo2.ml > %{targets})))
+  (action (with-stdout-to %{targets} 
+          (run qtest extract src/foo1.ml src/foo2.ml))))
 
 (executable
   (name run_qtest)
@@ -1037,13 +1038,23 @@ For better control, a rule can be used (adapt to fit your needs):
   (flags :standard -warn-error -a -w -33-35-27-39)
   (libraries qcheck))
 
-(alias
-  (name    runtest)
-  (deps    run_qtest.exe)
-  (action  (run %{deps})))
+(rule
+  (alias    runtest)
+  (action  (run ./run_qtest.exe)))
 
 ----
 
+Since version 2.8 `dune` has https://dune.readthedocs.io/en/stable/tests.html?highlight=deps#passing-special-arguments-to-the-test-runner[a simpler way to customize the test program]; the following has the same effect:
+[source]
+----
+(library
+  (name foo)
+  (inline_tests
+       (executable (flags :standard -warn-error -a -w -33-35-27-39))
+       (backend qtest.lib)))
+----
+
+On the more, for a better output, you may use `dune runtest -j 1 --no-buffer` (see this https://github.com/ocaml/dune/issues/3463#issuecomment-625268701[issue comment] in https://github.com/ocaml/dune/issues/3463[`dune` #3463 issue]).
 
 === Using qtest with OCamlbuild
 
