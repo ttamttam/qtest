@@ -1044,6 +1044,16 @@ For better control, a rule can be used (adapt to fit your needs):
 
 ----
 
+Since version 2.8 `dune` has https://dune.readthedocs.io/en/stable/tests.html?highlight=deps#passing-special-arguments-to-the-test-runner[a simpler way to customize the test program]; the following has the same effect:
+[source]
+----
+(library
+  (name foo)
+  (inline_tests
+       (executable (flags :standard -warn-error -a -w -33-35-27-39))
+       (backend qtest.lib)))
+----
+
 On the more, for a better output, you may use `dune runtest -j 1 --no-buffer` (see this https://github.com/ocaml/dune/issues/3463#issuecomment-625268701[issue comment] in https://github.com/ocaml/dune/issues/3463[`dune` #3463 issue]).
 
 === Using qtest with OCamlbuild
